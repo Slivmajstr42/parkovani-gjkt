@@ -25,7 +25,7 @@ function App() {
       .then((res) => res.json())
       .then((res) => {
         if (res.error) {
-          signOut();
+          signOut(authentication);
         }
       });
     const unsubscribe = onAuthStateChanged(authentication, (currentUser) => {
