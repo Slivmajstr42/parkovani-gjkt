@@ -14,7 +14,7 @@ import Blocking from "./Blocking";
 
 function App() {
   const [user, setUser] = useState(null);
-  const [loading, setLoading] = useState(true); //loading for wait for user data to be fetched
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     fetch(
@@ -23,9 +23,9 @@ function App() {
       )}`
     )
       .then((res) => res.json())
-      .then((data) => {
-        if (data.error) {
-          signOut(authentication);
+      .then((res) => {
+        if (res.error) {
+          signOut();
         }
       });
     const unsubscribe = onAuthStateChanged(authentication, (currentUser) => {
@@ -61,25 +61,25 @@ function App() {
         },
         {
           path: "/my-car",
-          element: <MyCar user={user} />,
+          element: <MyCar loading={loading} user={user} />,
         },
         {
           path: "/users",
-          element: <Users user={user} />,
+          element: <Users user={user} loading={loading} />,
         },
         {
           path: "/reservations",
-          element: <Reservations user={user} />,
+          element: <Reservations user={user} loading={loading} />,
         },
         {
           path: "/blocking",
-          element: <Blocking user={user} />,
+          element: <Blocking user={user} loading={loading} />,
         },
       ],
     },
   ]);
 
-  return <div>{!loading && <RouterProvider router={router} />}</div>;
+  return <RouterProvider router={router} />;
 }
 
 export default App;

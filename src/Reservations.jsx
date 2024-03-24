@@ -3,22 +3,22 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { db } from "./firebase";
 
-export default function Reservations({ user }) {
+export default function Reservations({ user, loading }) {
   const navigate = useNavigate();
   const [reservations, setReservations] = useState([]);
   const [msg, setMsg] = useState("");
-
+  console.log(user, loading);
   useEffect(() => {
-    if (user && user.role === 1) {
+    if (!loading && (!user || user.role !== 1)) {
+      navigate("/");
+    } else if (user && user.role === 1) {
       getDocs(collection(db, "users place")).then((data) => {
         let arr = [];
         data.forEach((item) => arr.push({ ...item.data(), id: item.id }));
         setReservations(arr);
       });
-    } else {
-      navigate("/");
     }
-  }, [user]);
+  }, [user, loading]);
 
   const removeReservation = (reservation) => {
     deleteDoc(doc(db, "users place", reservation.id));

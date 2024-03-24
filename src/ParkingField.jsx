@@ -35,7 +35,7 @@ const ParkingField = ({ user }) => {
       method: "POST",
       headers: {
         Authorization: "Bearer " + localStorage.getItem("auth_token"),
-      }, // dopsat bodycko
+      },
       body: JSON.stringify(payload),
     });
   };

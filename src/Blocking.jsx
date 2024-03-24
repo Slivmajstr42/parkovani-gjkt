@@ -6,6 +6,7 @@ import {
   getDocs,
   onSnapshot,
 } from "firebase/firestore";
+import { useNavigate } from "react-router-dom";
 import { useEffect } from "react";
 import { useState } from "react";
 import { db } from "./firebase";
@@ -13,7 +14,8 @@ import Calendar from "react-calendar";
 import "react-calendar/dist/Calendar.css";
 import dayjs from "dayjs";
 
-export default function Blocking() {
+export default function Blocking({ user, loading }) {
+  const navigate = useNavigate();
   const [checkboxes, setCheckboxes] = useState(null);
   const [date, setDate] = useState(null);
   const [places, setPlaces] = useState([]);
@@ -21,14 +23,17 @@ export default function Blocking() {
   const [cancelBlock, setCancelBlock] = useState(null);
 
   useEffect(() => {
-    getDocs(collection(db, "parking places")).then((data) => {
-      let arr = [];
-      data.forEach((item) => {
-        arr.push(item.data());
+    if (!loading && (!user || user.role !== 1)) {
+      navigate("/");
+    } else if (user && user.role === 1) {
+      getDocs(collection(db, "parking places")).then((data) => {
+        let arr = [];
+        data.forEach((item) => {
+          arr.push(item.data());
+        });
+        setPlaces(arr);
       });
-      setPlaces(arr);
-    });
-
+    }
     onSnapshot(collection(db, "blocking"), (snapshot) => {
       let data = [];
       snapshot.docs.forEach((item) => {
@@ -36,7 +41,7 @@ export default function Blocking() {
       });
       setData(data);
     });
-  }, []);
+  }, [user, loading]);
 
   useEffect(() => {
     if (places.length) {

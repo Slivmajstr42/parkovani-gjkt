@@ -11,6 +11,7 @@ export default function SignIn({ user }) {
     const token = credential.accessToken;
 
     localStorage.setItem("auth_token", token);
+
     const userEmail = result.user.email;
 
     const docRef = doc(db, "users", userEmail);

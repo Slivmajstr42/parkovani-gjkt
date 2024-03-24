@@ -3,22 +3,22 @@ import { doc, getDoc, updateDoc } from "firebase/firestore";
 import { db } from "./firebase";
 import { useNavigate } from "react-router-dom";
 
-export default function MyCar({ user }) {
+export default function MyCar({ user, loading }) {
   const navigate = useNavigate();
   const [form, setForm] = useState(null);
   const [msg, setMsg] = useState("");
 
   useEffect(() => {
-    if (user) {
+    if (!loading && !user) {
+      navigate("/");
+    } else if (user) {
       const docRef = doc(db, "users", user.email);
       getDoc(docRef).then((res) => {
         const { spz, number } = res.data();
         setForm({ spz, number });
       });
-    } else {
-      navigate("/");
     }
-  }, [user]);
+  }, [user, loading]);
 
   const handleClick = () => {
     const docRef = doc(db, "users", user.email);

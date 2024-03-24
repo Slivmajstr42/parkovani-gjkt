@@ -14,7 +14,7 @@ const roles = [
   { id: 2, name: "uživatel" },
 ];
 
-export default function Users({ user }) {
+export default function Users({ user, loading }) {
   const navigate = useNavigate();
   const [users, setUsers] = useState([]);
   const [email, setEmail] = useState("");
@@ -46,16 +46,16 @@ export default function Users({ user }) {
   };
 
   useEffect(() => {
-    if (user && user.role === 1) {
+    if (!loading && (!user || user.role !== 1)) {
+      navigate("/");
+    } else if (user && user.role === 1) {
       getDocs(collection(db, "users")).then((data) => {
         let arr = [];
         data.forEach((item) => arr.push(item.data()));
         setUsers(arr);
       });
-    } else {
-      navigate("/");
     }
-  }, [user]);
+  }, [user, loading]);
 
   return (
     <div className="flex flex-col gap-7">
