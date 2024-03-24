@@ -6,9 +6,7 @@ export default function TopBar({ user }) {
     <>
       <div className="flex justify-between px-5 border-b-2 shadow-2xl py-2 items-center">
         <Link to="/">
-          <h1 className="md:text-3xl text-2xl font-semibold">
-            Parkování GJKT- test
-          </h1>
+          <h1 className="md:text-3xl text-2xl font-semibold">Parkování GJKT</h1>
         </Link>
         <div className="flex gap-3 items-center">
           {user && user.role === 1 && (
