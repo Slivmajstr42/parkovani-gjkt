@@ -42,6 +42,7 @@ export default function MyCar({ user, loading }) {
           className="shadow appearance-none border rounded w-40 py-2 px-3
       text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
           type="text"
+          maxLength={9}
           placeholder="SPZ"
           name="spz"
           value={form.spz}
@@ -51,6 +52,7 @@ export default function MyCar({ user, loading }) {
           className="shadow appearance-none border rounded w-40 py-2 px-3
       text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
           type="text"
+          maxLength={9}
           name="number"
           placeholder="Tel. číslo"
           value={form.number}

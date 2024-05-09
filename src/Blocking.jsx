@@ -93,7 +93,7 @@ export default function Blocking({ user, loading }) {
   return (
     <div>
       <h2 className="text-xl font-semibold mb-2">Blokace</h2>
-      {data.length ? (
+      {data?.length ? (
         <table className="table-auto w-full">
           <thead>
             <tr>

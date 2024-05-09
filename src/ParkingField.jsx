@@ -1,4 +1,11 @@
-import { addDoc, collection, getDocs, onSnapshot } from "firebase/firestore";
+import {
+  addDoc,
+  collection,
+  deleteDoc,
+  doc,
+  getDocs,
+  onSnapshot,
+} from "firebase/firestore";
 import { useEffect, useState } from "react";
 import { db } from "./firebase";
 import dayjs from "dayjs";
@@ -12,6 +19,7 @@ const ParkingField = ({ user }) => {
   const [activeSpot, setActiveSpot] = useState(null);
   const [formMessage, setFormMessage] = useState("");
   const [data, setData] = useState([]);
+  const [cancel, setCancel] = useState(null);
 
   const handleSave = () => {
     addDoc(collection(db, "users place"), {
@@ -49,6 +57,7 @@ const ParkingField = ({ user }) => {
 
   const checkParkingSpace = (location, reservation) => {
     if (!reservation) {
+      setCancel(null);
       setFormMessage("");
       setActiveSpot({
         location,
@@ -57,6 +66,9 @@ const ParkingField = ({ user }) => {
         spz: user.spz,
         number: user.number,
       });
+    } else if (reservation.email === user.email) {
+      setActiveSpot(null);
+      setCancel(reservation);
     }
   };
 
@@ -72,7 +84,7 @@ const ParkingField = ({ user }) => {
     onSnapshot(collection(db, "users place"), (snapshot) => {
       let data = [];
       snapshot.docs.forEach((item) => {
-        data.push({ ...item.data() });
+        data.push({ ...item.data(), id: item.id });
       });
       setData(data);
     });
@@ -85,6 +97,12 @@ const ParkingField = ({ user }) => {
       setBlocks(arr);
     });
   }, []);
+
+  const cancelReservation = (data) => {
+    deleteDoc(doc(db, "users place", data.id));
+    setCancel(null);
+    setFormMessage("Rezervace odstraněna");
+  };
 
   return (
     <div>
@@ -103,7 +121,9 @@ const ParkingField = ({ user }) => {
       </div>
       <div
         style={{
-          gridTemplateColumns: "repeat(8, 140px)",
+          gridTemplateColumns: `repeat(${Math.ceil(
+            parkingPlaces.length / 2
+          )},140px)`,
           gridTemplateRows: "repeat(2,220px)",
         }}
         className="w-full grid gap-1 overflow-x-scroll"
@@ -127,7 +147,11 @@ const ParkingField = ({ user }) => {
             <div
               key={i}
               className={`bg-gray-500 cursor-pointer flex flex-col ${
-                blocking ? "bg-red-500" : reservation ? "" : "bg-green-500"
+                blocking
+                  ? "bg-red-500 pointer-events-none"
+                  : reservation
+                  ? ""
+                  : "bg-green-500"
               }`}
               onClick={() => checkParkingSpace(location, reservation)}
             >
@@ -150,6 +174,22 @@ const ParkingField = ({ user }) => {
       </div>
       {!!formMessage.length && (
         <p className="text-green-500 text-lg">{formMessage}</p>
+      )}
+      {cancel && (
+        <div className="flex flex-col mt-4 gap-2">
+          <h2 className="text-xl font-semibold">Moje rezervace</h2>
+          <p>Email: {cancel.email}</p>
+          <p>Místo: {cancel.location}</p>
+          <p>Datum: {cancel.date}</p>
+          <p>SPZ: {cancel.spz}</p>
+          <button
+            className="bg-red-500 text-white font-bold py-2 px-4 rounded disabled:bg-gray-400 w-40"
+            type="button"
+            onClick={() => cancelReservation(cancel)}
+          >
+            Zrušit rezervaci
+          </button>
+        </div>
       )}
       {activeSpot && (
         <div className="flex flex-col mt-4 gap-2">

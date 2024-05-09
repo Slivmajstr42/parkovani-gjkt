@@ -27,6 +27,7 @@ export default function Reservations({ user, loading }) {
 
   return (
     <div>
+      <h2 className="text-xl font-semibold mb-2">Rezervace</h2>
       <table className="table-auto w-full">
         <thead>
           <tr>
